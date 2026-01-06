@@ -1,4 +1,4 @@
--- name: [CS] Character Select Template
+-- name: [CS] 1996x
 -- description: Write mod description here!\n\nMade by: You!\n\n\\#ff7777\\This Pack requires Character Select\nto use as a Library!
 
 --[[
@@ -9,7 +9,7 @@
 ]]
 
 -- Replace Mod Name with your Character/Pack name.
-local TEXT_MOD_NAME = "Custom Character"
+local TEXT_MOD_NAME = "1996x"
 
 -- Stops mod from loading if Character Select isn't on, Does not need to be touched
 if not _G.charSelectExists then
@@ -17,21 +17,7 @@ if not _G.charSelectExists then
     return 0
 end
 
---[[
-    Everything from here down is character data, and is loaded at the end of the file
-
-    Note that most things here are noted out via use of '--', if there is any
-    functionality you'd want to use then remove the '--' in front of the functions.
-
-    If needbe, Replace CHAR in the tables with your character's name
-    Ex: E_MODEL_CHAR -> E_MODEL_SQUISHY
-
-    Ensure all file naming is unique from other mods.
-    Prefixing your files with your character's name should work fine
-    Ex: life-icon.png -> squis
-]]
-
-local E_MODEL_CHAR =      smlua_model_util_get_id("custom_model_geo")      -- Located in "actors"
+local E_MODEL_X =      smlua_model_util_get_id("_1996x_geo")      -- Located in "actors"
 -- local E_MODEL_CHAR_STAR = smlua_model_util_get_id("custom_model_star_geo") -- Located in "actors"
 
 local TEX_CHAR_LIFE_ICON = get_texture_info("exclamation-icon") -- Located in "textures"
@@ -110,78 +96,23 @@ local PALETTE_CHAR = {
 	[EMBLEM] = "ffffff"
 }
 
--- All Located in "textures" folder
--- (Textures do not exist in template)
---[[
-local HEALTH_METER_CHAR = {
-    label = {
-        left = get_texture_info("healthleft"),
-        right = get_texture_info("healthright"),
-    },
-    pie = {
-        [1] = get_texture_info("Pie1"),
-        [2] = get_texture_info("Pie2"),
-        [3] = get_texture_info("Pie3"),
-        [4] = get_texture_info("Pie4"),
-        [5] = get_texture_info("Pie5"),
-        [6] = get_texture_info("Pie6"),
-        [7] = get_texture_info("Pie7"),
-        [8] = get_texture_info("Pie8"),
-    }
-}
-]]
-
---[[
-    Everything from here down where the data is applied
-
-    Note that nothing here other than the 'character_add' function
-    is required for a custom character, if you don't have the assets
-    then feel free to remove the function from the functions below
-]]
-
-local CSloaded = false
 local function on_character_select_load()
     -- Adds the custom character to the Character Select Menu
-    CT_CHAR = _G.charSelect.character_add(
-        "Custom Character", -- Character Name
-        "Description/Info", -- Description
-        "Mod Creator Name", -- Credits
-        "ffaaaa",           -- Menu Color
-        E_MODEL_CHAR,       -- Character Model
+    CT_X = _G.charSelect.character_add(
+        "1996x", -- Character Name
+        "I'm gonna getcha!", -- Description
+        "Squishy / 5up", -- Credits
+        "1111ff",           -- Menu Color
+        E_MODEL_X,       -- Character Model
         CT_MARIO,           -- Override Character
-        TEX_CHAR_LIFE_ICON, -- Life Icon
+        "X", -- Life Icon
         1                   -- Camera Scale
     )
 
-    -- Adds cap models to your character
-    -- (Models do not exist in template)
-    -- _G.charSelect.character_add_caps(E_MODEL_CHAR, CAPTABLE_CHAR)
-
-    -- Adds a voice to your character
-    -- (Sounds do not exist in template)
-    -- _G.charSelect.character_add_voice(E_MODEL_CHAR, VOICETABLE_CHAR)
-
-    -- Adds a celebration star to your character
-    -- (Models do not exist in template)
-    --_G.charSelect.character_add_celebration_star(E_MODEL_CHAR, E_MODEL_CHAR_STAR, TEX_CHAR_STAR_ICON)
-
-    -- Adds a palette to your character
     _G.charSelect.character_add_palette_preset(E_MODEL_CHAR, PALETTE_CHAR)
 
-    -- Adds a health meter to your character
-    -- (Textures do not exist in template)
-    -- _G.charSelect.character_add_health_meter(CT_CHAR, HEALTH_METER_CHAR)
-
-    -- Adds credits to the credits menu
-    _G.charSelect.credit_add(TEXT_MOD_NAME, "You", "Pack")
-
-    CSloaded = true
+    _G.charSelect.credit_add(TEXT_MOD_NAME, "Squishy6094", "Movement")
+    _G.charSelect.credit_add(TEXT_MOD_NAME, "5up", "Modeling")
 end
-
--- Character Voice hooks
--- You will likely not need to care about these
--- Will soon be overhauled
-
-_G.charSelect.config_character_sounds()
 
 hook_event(HOOK_ON_MODS_LOADED, on_character_select_load)
