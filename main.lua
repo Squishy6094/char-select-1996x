@@ -85,15 +85,15 @@ local CAPTABLE_CHAR = {
 }
 ]]
 
-local PALETTE_CHAR = {
-    [PANTS]  = "ffffff",
+local PALETTE_X = {
+    [PANTS]  = "000598",
     [SHIRT]  = "ffffff",
     [GLOVES] = "ffffff",
-    [SHOES]  = "ffffff",
+    [SHOES]  = "090056",
     [HAIR]   = "ffffff",
-    [SKIN]   = "ffffff",
-    [CAP]    = "ffffff",
-	[EMBLEM] = "ffffff"
+    [SKIN]   = "E3AA75",
+    [CAP]    = "857F26",
+    [EMBLEM] = "ffffff"
 }
 
 local function on_character_select_load()
@@ -109,7 +109,7 @@ local function on_character_select_load()
         1                   -- Camera Scale
     )
 
-    _G.charSelect.character_add_palette_preset(E_MODEL_CHAR, PALETTE_CHAR)
+    _G.charSelect.character_add_palette_preset(E_MODEL_X, PALETTE_X)
 
     _G.charSelect.credit_add(TEXT_MOD_NAME, "Squishy6094", "Movement")
     _G.charSelect.credit_add(TEXT_MOD_NAME, "5up", "Modeling")
