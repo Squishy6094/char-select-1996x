@@ -74,14 +74,14 @@ local CAPTABLE_X = {
 ]]
 
 local PALETTE_X = {
-    [PANTS] = "ffffff",
-    [SHIRT] = "ffffff",
-    [GLOVES] = "ffffff",
-    [SHOES] = "ffffff",
-    [HAIR] = "ffffff",
-    [SKIN] = "ffffff",
-    [CAP] = "ffffff",
-	[EMBLEM] = "ffffff"
+    [PANTS] = "000598",
+    [SHIRT] = "FFFFFF",
+    [GLOVES] = "FFFFFF",
+    [SHOES] = "090056",
+    [HAIR] = "FFFFFF",
+    [SKIN] = "E3AA75",
+    [CAP] = "857F26",
+    [EMBLEM] = "FFFFFF"
 }
 
 local ANIMTABLE_X = {
@@ -107,7 +107,7 @@ local function on_character_select_load()
 
 	-- _G.charSelect.character_add_voice(E_MODEL_X, VOICETABLE_X)
 
-    -- _G.charSelect.character_add_palette_preset(E_MODEL_X, PALETTE_X)
+    _G.charSelect.character_add_palette_preset(E_MODEL_X, PALETTE_X)
 
 	_G.charSelect.character_add_animations(E_MODEL_X, ANIMTABLE_X)
 
