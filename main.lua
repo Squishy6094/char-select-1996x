@@ -114,7 +114,7 @@ local function on_character_select_load()
 	-- _G.charSelect.character_add_graffiti(CT_X, TEX_X_GRAFFITI)
 
     _G.charSelect.credit_add(TEXT_MOD_NAME, "Squishy6094", "Movement")
-    _G.charSelect.credit_add(TEXT_MOD_NAME, "5UP34", "Modeling / Art")
+    _G.charSelect.credit_add(TEXT_MOD_NAME, "5oph1e", "Modeling / Art")
     _G.charSelect.credit_add(TEXT_MOD_NAME, "Demi-kun", "Extra Help")
 end
 
