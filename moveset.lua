@@ -1,3 +1,5 @@
+if not _G.charSelectExists then return end
+
 gXStates = {}
 
 local function x_reset_extra_states(index)

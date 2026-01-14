@@ -1,31 +1,21 @@
 -- name: [CS] 1996x
 -- description: Write mod description here!\n\nMade by: You!\n\n\\#ff7777\\This Pack requires Character Select\nto use as a Library!
 
---[[
-    API Documentation for Character Select can be found below:
-    https://github.com/Squishy6094/character-select-coop/wiki/API-Documentation
-
-    Use this if you're curious on how anything here works >v<
-]]
-
--- Replace Mod Name with your Character/Pack name.
 local TEXT_MOD_NAME = "1996x"
 
--- Stops mod from loading if Character Select isn't on, Does not need to be touched
 if not _G.charSelectExists then
     djui_popup_create("\\#ffffdc\\\n"..TEXT_MOD_NAME.."\nRequires the Character Select Mod\nto use as a Library!\n\nPlease turn on the Character Select Mod\nand Restart the Room!", 6)
     return 0
 end
 
-local E_MODEL_X =      smlua_model_util_get_id("_1996x_geo")      -- Located in "actors"
--- local E_MODEL_CHAR_STAR = smlua_model_util_get_id("custom_model_star_geo") -- Located in "actors"
+local E_MODEL_X = smlua_model_util_get_id("_1996x_geo")
+-- local E_MODEL_CHAR_STAR = smlua_model_util_get_id("custom_model_star_geo")
 
-local TEX_CHAR_LIFE_ICON = get_texture_info("exclamation-icon") -- Located in "textures"
--- local TEX_CHAR_STAR_ICON = get_texture_info("exclamation-icon") -- Located in "textures"
+local TEX_X_LIFE_ICON = get_texture_info("_1996x-icon")
+-- local TEX_CHAR_STAR_ICON = get_texture_info("exclamation-icon")
+-- local TEX_X_GRAFFITI = get_texture_info("_1996x-graffiti")
 
--- All sound files are located in "sound" folder
--- Remember to include the file extention in the name
-local VOICETABLE_CHAR = {
+local VOICETABLE_X = {
     [CHAR_SOUND_OKEY_DOKEY] =        'CharStartGame.ogg', -- Starting game
 	[CHAR_SOUND_LETS_A_GO] =         'CharStartLevel.ogg', -- Starting level
 	[CHAR_SOUND_GAME_OVER] =         'CharGameOver.ogg', -- Game Overed
@@ -75,44 +65,57 @@ local VOICETABLE_CHAR = {
 	[CHAR_SOUND_MAMA_MIA] =          'CharLeaveLevel.ogg' -- Booted out of level
 }
 
--- All Located in "actors" folder
--- (Models do not exist in template)
 --[[
-local CAPTABLE_CHAR = {
-    normal = smlua_model_util_get_id("FILENAME_geo"),
-    wing = smlua_model_util_get_id("FILENAME_geo"),
-    metal = smlua_model_util_get_id("FILENAME_geo"),
+local CAPTABLE_X = {
+    normal = smlua_model_util_get_id("_1996x_cap_geo"),
+    wing = smlua_model_util_get_id("_1996x_cap_wing_geo"),
+    metal = smlua_model_util_get_id("_1996x_cap_metal_geo")
 }
 ]]
 
-local PALETTE_CHAR = {
-    [PANTS]  = "ffffff",
-    [SHIRT]  = "ffffff",
-    [GLOVES] = "ffffff",
-    [SHOES]  = "ffffff",
-    [HAIR]   = "ffffff",
-    [SKIN]   = "ffffff",
-    [CAP]    = "ffffff",
-	[EMBLEM] = "ffffff"
+local PALETTE_X = {
+    [PANTS] = "000598",
+    [SHIRT] = "FFFFFF",
+    [GLOVES] = "FFFFFF",
+    [SHOES] = "090056",
+    [HAIR] = "FFFFFF",
+    [SKIN] = "E3AA75",
+    [CAP] = "857F26",
+    [EMBLEM] = "FFFFFF"
+}
+
+local ANIMTABLE_X = {
+	[charSelect.CS_ANIM_MENU] = X_ANIM_CS_MENU,
+	[CHAR_ANIM_IDLE_HEAD_LEFT] = X_ANIM_IDLE_LEFT,
+	[CHAR_ANIM_IDLE_HEAD_RIGHT] = X_ANIM_IDLE_RIGHT,
+	[CHAR_ANIM_IDLE_HEAD_CENTER] = X_ANIM_IDLE_CENTER
 }
 
 local function on_character_select_load()
-    -- Adds the custom character to the Character Select Menu
     CT_X = _G.charSelect.character_add(
-        "1996x", -- Character Name
-        "I'm gonna getcha!", -- Description
-        "Squishy / 5up", -- Credits
-        "1111ff",           -- Menu Color
-        E_MODEL_X,       -- Character Model
-        CT_MARIO,           -- Override Character
-        "X", -- Life Icon
-        1                   -- Camera Scale
+        "1996x",
+        "I'm gonna getcha!",
+        "Squishy / 5oph1e",
+        "1111ff",
+        E_MODEL_X,
+        CT_MARIO,
+        TEX_X_LIFE_ICON,
+        1.1
     )
 
-    _G.charSelect.character_add_palette_preset(E_MODEL_CHAR, PALETTE_CHAR)
+	-- _G.charSelect.character_add_caps(E_MODEL_X, CAPTABLE_X)
+
+	-- _G.charSelect.character_add_voice(E_MODEL_X, VOICETABLE_X)
+
+    _G.charSelect.character_add_palette_preset(E_MODEL_X, PALETTE_X)
+
+	_G.charSelect.character_add_animations(E_MODEL_X, ANIMTABLE_X)
+
+	-- _G.charSelect.character_add_graffiti(CT_X, TEX_X_GRAFFITI)
 
     _G.charSelect.credit_add(TEXT_MOD_NAME, "Squishy6094", "Movement")
-    _G.charSelect.credit_add(TEXT_MOD_NAME, "5up", "Modeling")
+    _G.charSelect.credit_add(TEXT_MOD_NAME, "5oph1e", "Modeling / Art")
+    _G.charSelect.credit_add(TEXT_MOD_NAME, "Demi-kun", "Extra Help")
 end
 
 hook_event(HOOK_ON_MODS_LOADED, on_character_select_load)
