@@ -6,6 +6,7 @@ local function x_reset_extra_states(index)
     if index == nil then index = 0 end
     gXStates[index] = {
         index = network_global_index_from_local(0),
+        interactingDoor = false,
     }
 end
 for i = 0, MAX_PLAYERS - 1 do
@@ -199,13 +200,32 @@ end
 hook_mario_action(ACT_X_WALKING, act_x_walking)
 
 local function before_x_action(m, nextAct)
-    if nextAct == ACT_WALKING then
+    local e = gXStates[m.playerIndex]
+    if nextAct == ACT_WALKING and not e.interactingDoor then
         return set_mario_action(m, ACT_X_WALKING, 0)
+    else
+        e.interactingDoor = false
+    end
+end
+
+local DoorInteractions = {
+    [id_bhvDoor] = true,
+    [id_bhvDoorWarp] = true,
+    [id_bhvStarDoor] = true,
+    [id_bhvBowserKeyUnlockDoor] = true,
+}
+
+local function x_on_interact(m, o, t)
+    local e = gXStates[m.playerIndex]
+    if DoorInteractions[get_id_from_behavior(o.behavior)] and m.action == ACT_X_WALKING then
+        e.interactingDoor = true
+        set_mario_action(m, ACT_WALKING, 0)
     end
 end
 
 local function on_character_select_load()
     _G.charSelect.character_hook_moveset(CT_X, HOOK_BEFORE_SET_MARIO_ACTION, before_x_action)
+    _G.charSelect.character_hook_moveset(CT_X, HOOK_ON_INTERACT, x_on_interact)
 end
 
 hook_event(HOOK_ON_MODS_LOADED, on_character_select_load)
