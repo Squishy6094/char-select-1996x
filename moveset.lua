@@ -7,7 +7,7 @@ local function x_reset_extra_states(index)
     gXStates[index] = {
         index = network_global_index_from_local(0),
         stunTimer = 0,
-        interactingDoor = false,
+        interactingSpecial = false,
     }
 end
 for i = 0, MAX_PLAYERS - 1 do
@@ -267,24 +267,25 @@ end
 
 local function before_x_action(m, nextAct)
     local e = gXStates[m.playerIndex]
-    if nextAct == ACT_WALKING and not e.interactingDoor then
+    if nextAct == ACT_WALKING and not e.interactingSpecial then
         return set_mario_action(m, ACT_X_WALKING, 0)
     else
-        e.interactingDoor = false
+        e.interactingSpecial = false
     end
 end
 
-local DoorInteractions = {
+local INTERACTIONS_X = {
     [id_bhvDoor] = true,
     [id_bhvDoorWarp] = true,
     [id_bhvStarDoor] = true,
     [id_bhvBowserKeyUnlockDoor] = true,
+    [id_bhvKoopaShell] = true,
 }
 
 local function x_on_interact(m, o, t)
     local e = gXStates[m.playerIndex]
-    if DoorInteractions[get_id_from_behavior(o.behavior)] and m.action == ACT_X_WALKING then
-        e.interactingDoor = true
+    if INTERACTIONS_X[get_id_from_behavior(o.behavior)] and m.action == ACT_X_WALKING then
+        e.interactingSpecial = true
         set_mario_action(m, ACT_WALKING, 0)
     end
 end
