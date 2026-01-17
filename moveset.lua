@@ -6,6 +6,7 @@ local function x_reset_extra_states(index)
     if index == nil then index = 0 end
     gXStates[index] = {
         index = network_global_index_from_local(0),
+        stunTimer = 0,
         interactingDoor = false,
     }
 end
@@ -13,11 +14,12 @@ for i = 0, MAX_PLAYERS - 1 do
     x_reset_extra_states(i)
 end
 
-local function x_update_walking_speed(m)
+local function x_update_speed(m)
     if not m then return end
 
+    local onFloor = m.action & ACT_FLAG_AIR == 0
     local maxTargetSpeed = 50.0;
-    if (m.floor ~= nil and m.floor.type == SURFACE_SLOW) then
+    if (m.floor ~= nil and m.floor.type == SURFACE_SLOW and onFloor) then
         maxTargetSpeed = 40.0;
     end
 
@@ -43,9 +45,11 @@ local function x_update_walking_speed(m)
     --    m.forwardVel = 48.0;
     --end
 
-    local turnSpeed = 0x500 * math.clamp(maxTargetSpeed/m.forwardVel, 1, 3) -- Default 0x800
+    local turnSpeed = 0xA00
     m.faceAngle.y = m.intendedYaw - approach_s32(math.s16(m.intendedYaw - m.faceAngle.y), 0, turnSpeed, turnSpeed);
-    apply_slope_accel(m);
+    if onFloor then
+        apply_slope_accel(m);
+    end
 end
 
 local function x_anim_and_audio_for_walk(m)
@@ -137,6 +141,8 @@ local function x_anim_and_audio_for_walk(m)
 end
 
 local ACT_X_WALKING = allocate_mario_action(ACT_GROUP_MOVING)
+local ACT_X_JUMP = allocate_mario_action(ACT_FLAG_AIR)
+local ACT_X_STUN = allocate_mario_action(ACT_GROUP_CUTSCENE | ACT_FLAG_INVULNERABLE)
 
 local function act_x_walking(m)
     if not m then return 0 end
@@ -154,7 +160,7 @@ local function act_x_walking(m)
     --end
 
     if (m.input & INPUT_A_PRESSED ~= 0) then
-        return set_jump_from_landing(m);
+        return set_mario_action(m, ACT_X_JUMP, 0);
     end
 
     if (check_ground_dive_or_punch(m) ~= 0) then
@@ -176,7 +182,7 @@ local function act_x_walking(m)
     m.actionState = 0;
 
     vec3f_copy(startPos, m.pos);
-    x_update_walking_speed(m);
+    x_update_speed(m);
 
     local step = perform_ground_step(m)
     if step == GROUND_STEP_LEFT_GROUND then
@@ -197,7 +203,67 @@ local function act_x_walking(m)
     return 0;
 end
 
+local function act_x_jump(m)
+    if m.actionState == 0 then
+        m.vel.y = m.vel.y + 80
+        m.actionState = m.actionState + 1
+    end
+    m.vel.x = m.forwardVel * sins(m.faceAngle.y)
+    m.vel.z = m.forwardVel * coss(m.faceAngle.y)
+    local step = perform_air_step(m, AIR_STEP_NONE)
+    if step == AIR_STEP_LANDED then
+        set_mario_action(m, ACT_X_WALKING, 0)
+    end
+    set_mario_animation(m, CHAR_ANIM_FORWARD_SPINNING)
+    x_update_speed(m);
+end
+
+local function act_x_jump_gravity(m)
+    m.vel.y = math.max(m.vel.y - 6, -70)
+end
+
+local function act_x_stun(m)
+    local e = gXStates[m.playerIndex]
+    if m.actionState == 0 then
+        e.stunTimer = math.min(e.stunTimer, 10)
+        m.vel.x = m.vel.x * 3
+        m.vel.z = m.vel.z * 3
+        m.actionState = m.actionState + 1
+    end
+    if e.stunTimer <= 0 then
+        m.vel.x = 0
+        m.vel.z = 0
+        return set_mario_action(m, ACT_IDLE, 0)
+    end
+    local onFloor = m.pos.y == m.floorHeight
+    local step = onFloor and perform_ground_step(m) or perform_air_step(m, AIR_STEP_NONE)
+    if step == AIR_STEP_LANDED then
+        m.vel.y = 0
+    end
+    m.vel.x = m.vel.x * 0.8
+    m.vel.z = m.vel.z * 0.8
+    e.stunTimer = e.stunTimer - 1
+    set_mario_animation(m, CHAR_ANIM_BACKWARD_KB)
+end
+
 hook_mario_action(ACT_X_WALKING, act_x_walking)
+hook_mario_action(ACT_X_JUMP, {every_frame = act_x_jump, gravity = act_x_jump_gravity})
+hook_mario_action(ACT_X_STUN, act_x_stun)
+
+---@param m MarioState
+local function x_update(m)
+    local e = gXStates[m.playerIndex]
+
+    -- Inf Health
+    m.health = 0x880
+
+    -- Handle Stun
+    if m.hurtCounter > 0 and m.action ~= ACT_X_STUN then
+        e.stunTimer = m.hurtCounter*30
+        m.hurtCounter = 0
+        set_mario_action(m, ACT_X_STUN, 0)
+    end
+end
 
 local function before_x_action(m, nextAct)
     local e = gXStates[m.playerIndex]
@@ -224,6 +290,7 @@ local function x_on_interact(m, o, t)
 end
 
 local function on_character_select_load()
+    _G.charSelect.character_hook_moveset(CT_X, HOOK_MARIO_UPDATE, x_update)
     _G.charSelect.character_hook_moveset(CT_X, HOOK_BEFORE_SET_MARIO_ACTION, before_x_action)
     _G.charSelect.character_hook_moveset(CT_X, HOOK_ON_INTERACT, x_on_interact)
 end
