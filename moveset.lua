@@ -8,6 +8,7 @@ local function x_reset_extra_states(index)
         index = network_global_index_from_local(0),
         stunTimer = 0,
         interactingSpecial = false,
+        shading = {r = 127, g = 127, b = 127},
     }
 end
 for i = 0, MAX_PLAYERS - 1 do
